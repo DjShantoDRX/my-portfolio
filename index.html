@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AppNest – Free Android Apps & Games Download</title>
+<meta name="description" content="AppNest – browse and download Android apps and games.">
+<style>
+:root{
+  --bg:#f4f6fb;--card:#ffffff;--text:#1b1f2a;--muted:#6b7385;--line:#e5e8f0;
+  --primary:#16a34a;--primary-d:#128a3e;--accent:#6366f1;--shadow:0 4px 18px rgba(20,30,60,.08);
+}
+body.dark{
+  --bg:#0f1219;--card:#181c26;--text:#eef1f7;--muted:#98a1b5;--line:#272d3b;--shadow:0 4px 18px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;transition:background .25s,color .25s}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0}
+.container{max-width:1180px;margin:0 auto;padding:0 16px}
+
+/* header */
+header{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.nav{display:flex;align-items:center;gap:14px;height:64px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1.35rem;cursor:pointer}
+.logo i{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--primary),#22d3ee);display:grid;place-items:center;color:#fff;font-style:normal}
+.logo span b{color:var(--primary)}
+.search{flex:1;max-width:520px;margin-left:auto;position:relative}
+.search input{width:100%;padding:10px 16px 10px 40px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:.95rem;outline:none}
+.search input:focus{border-color:var(--primary)}
+.search:before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:.9rem}
+.menu{display:flex;gap:4px}
+.menu a{padding:8px 14px;border-radius:8px;font-weight:600;font-size:.92rem;color:var(--muted);cursor:pointer}
+.menu a:hover,.menu a.active{background:var(--bg);color:var(--primary)}
+.icon-btn{width:40px;height:40px;border-radius:50%;background:var(--bg);color:var(--text);font-size:1.1rem}
+@media(max-width:760px){.menu{display:none}.logo span{font-size:1.15rem}}
+
+/* hero */
+.hero{background:linear-gradient(120deg,#16a34a,#0ea5e9 70%);color:#fff;padding:44px 0;text-align:center}
+.hero h1{font-size:clamp(1.6rem,4vw,2.5rem);margin-bottom:8px}
+.hero p{opacity:.92;max-width:620px;margin:0 auto 20px}
+.stats{display:flex;justify-content:center;gap:28px;flex-wrap:wrap;font-weight:700}
+.stats small{display:block;font-weight:400;opacity:.85}
+
+/* chips */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:18px 0 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;padding:8px 16px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--text);font-weight:600;font-size:.88rem}
+.chip.active,.chip:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* sections */
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin:22px 0 14px}
+.sec-head h2{font-size:1.25rem}
+.sort{padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text)}
+
+/* featured row */
+.featured{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(250px,1fr);gap:14px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin}
+.feat{border-radius:16px;padding:18px;color:#fff;cursor:pointer;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow);transition:transform .2s}
+.feat:hover{transform:translateY(-3px)}
+.feat h3{font-size:1.1rem}.feat p{font-size:.82rem;opacity:.9}
+.feat .ic{font-size:2rem}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:.2s;box-shadow:var(--shadow)}
+.card:hover{transform:translateY(-3px);border-color:var(--primary)}
+.app-ic{width:64px;height:64px;border-radius:16px;flex:none;display:grid;place-items:center;font-size:2rem;color:#fff}
+.card .info{min-width:0;flex:1}
+.card h3{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .meta{font-size:.78rem;color:var(--muted)}
+.tag{display:inline-block;font-size:.68rem;padding:2px 8px;border-radius:6px;background:rgba(22,163,74,.12);color:var(--primary);font-weight:700;margin-top:4px}
+.empty{text-align:center;color:var(--muted);padding:50px 0}
+.more{display:block;margin:24px auto;padding:12px 32px;border-radius:999px;background:var(--primary);color:#fff;font-weight:700}
+.more:hover{background:var(--primary-d)}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(5,10,20,.6);display:none;align-items:flex-end;justify-content:center;z-index:100;padding:0}
+.overlay.show{display:flex}
+.modal{background:var(--card);width:100%;max-width:720px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:22px;animation:up .25s}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media(min-width:720px){.overlay{align-items:center;padding:20px}.modal{border-radius:22px}}
+.m-top{display:flex;gap:16px;align-items:center}
+.m-top .app-ic{width:84px;height:84px;font-size:2.6rem;border-radius:20px}
+.m-top h2{font-size:1.4rem}
+.close{margin-left:auto;align-self:flex-start;width:36px;height:36px;border-radius:50%;background:var(--bg);color:var(--text);font-size:1.1rem}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:18px 0}
+.fact{background:var(--bg);border-radius:12px;padding:10px;text-align:center}
+.fact b{display:block;font-size:1rem}.fact small{color:var(--muted)}
+.dl-btn{width:100%;padding:14px;border-radius:12px;background:var(--primary);color:#fff;font-weight:800;font-size:1.05rem;display:flex;justify-content:center;align-items:center;gap:8px}
+.dl-btn:hover{background:var(--primary-d)}
+.dl-btn:disabled{background:var(--muted);cursor:wait}
+.progress{height:6px;border-radius:6px;background:var(--line);margin-top:10px;overflow:hidden;display:none}
+.progress div{height:100%;width:0;background:var(--primary);transition:width 1s linear}
+.modal h4{margin:18px 0 6px}
+.modal p,.modal li{color:var(--muted);font-size:.93rem}
+.modal ul{padding-left:20px}
+table.spec{width:100%;border-collapse:collapse;margin-top:6px;font-size:.9rem}
+table.spec td{padding:8px 4px;border-bottom:1px solid var(--line)}
+table.spec td:first-child{color:var(--muted);width:40%}
+
+/* footer */
+footer{margin-top:40px;background:var(--card);border-top:1px solid var(--line);padding:28px 0;text-align:center;color:var(--muted);font-size:.88rem}
+footer .links{display:flex;gap:18px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#111827;color:#fff;padding:12px 20px;border-radius:12px;transition:.3s;z-index:200;font-size:.9rem}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="logo" onclick="resetAll()"><i>▼</i><span>App<b>Nest</b></span></div>
+    <nav class="menu">
+      <a class="active" data-type="all" onclick="setType('all',this)">Home</a>
+      <a data-type="App" onclick="setType('App',this)">Apps</a>
+      <a data-type="Game" onclick="setType('Game',this)">Games</a>
+    </nav>
+    <div class="search"><input id="q" type="search" placeholder="Search apps & games..." autocomplete="off"></div>
+    <button class="icon-btn" id="theme" title="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Download the Best Android Apps & Games</h1>
+    <p>Fast, simple and clean. Browse by category, search anything and download in one tap.</p>
+    <div class="stats">
+      <div><span id="sApps">0</span><small>Apps</small></div>
+      <div><span id="sGames">0</span><small>Games</small></div>
+      <div>1M+<small>Downloads</small></div>
+    </div>
+  </div>
+</section>
+
+<main class="container">
+  <div class="chips" id="chips"></div>
+
+  <div id="featWrap">
+    <div class="sec-head"><h2>🔥 Featured</h2></div>
+    <div class="featured" id="featured"></div>
+  </div>
+
+  <div class="sec-head">
+    <h2 id="listTitle">Latest Updates</h2>
+    <select class="sort" id="sort">
+      <option value="new">Newest</option>
+      <option value="rate">Top Rated</option>
+      <option value="dl">Most Downloaded</option>
+      <option value="name">A – Z</option>
+    </select>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">😕 Nothing found. Try another keyword.</div>
+  <button class="more" id="more">Load more</button>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="links"><a href="#">About</a><a href="#">Contact</a><a href="#">Privacy Policy</a><a href="#">DMCA</a><a href="#">Terms</a></div>
+    © <span id="yr"></span> AppNest. All trademarks belong to their respective owners.
+  </div>
+</footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   ✏️ EDIT YOUR APPS HERE
+   Add / remove objects. "link" = your real download URL (.apk
+   or a page). Only distribute files you have the right to share.
+   ============================================================ */
+const APPS = [
+ {n:"PhotoPro Editor",t:"App",c:"Photography",ic:"📷",col:"#ec4899,#8b5cf6",v:"5.2.1",s:"68 MB",r:4.7,d:5200000,u:"Oct 28, 2026",os:"Android 7.0+",dev:"Pixel Labs",link:"#",desc:"A powerful photo editor with filters, retouching, collage maker and AI background remover.",feat:["Hundreds of filters","Background remover","Collage & text tools","Export in HD"]},
+ {n:"StreamBox Player",t:"App",c:"Video Players",ic:"▶️",col:"#ef4444,#f97316",v:"3.9.0",s:"42 MB",r:4.5,d:3100000,u:"Oct 30, 2026",os:"Android 6.0+",dev:"BoxSoft",link:"#",desc:"Play every video format with subtitle support, gesture controls and Chromecast.",feat:["All formats","Subtitle sync","Gesture controls","Picture-in-picture"]},
+ {n:"MusicWave",t:"App",c:"Music",ic:"🎵",col:"#06b6d4,#3b82f6",v:"8.1.4",s:"55 MB",r:4.6,d:8800000,u:"Nov 01, 2026",os:"Android 8.0+",dev:"WaveAudio",link:"#",desc:"Stream and organize your music library with an equalizer and offline playlists.",feat:["10-band equalizer","Offline mode","Sleep timer","Lyrics view"]},
+ {n:"SecureVPN Lite",t:"App",c:"Tools",ic:"🛡️",col:"#22c55e,#14b8a6",v:"2.4.7",s:"24 MB",r:4.3,d:2400000,u:"Oct 22, 2026",os:"Android 5.0+",dev:"SafeNet",link:"#",desc:"Lightweight VPN to protect your privacy on public Wi-Fi with fast servers worldwide.",feat:["No logs policy","60+ locations","One-tap connect","Kill switch"]},
+ {n:"FileMaster Pro",t:"App",c:"Tools",ic:"📁",col:"#f59e0b,#ef4444",v:"6.0.2",s:"18 MB",r:4.4,d:1900000,u:"Oct 18, 2026",os:"Android 6.0+",dev:"MasterApps",link:"#",desc:"Clean, fast file manager with cloud support, archive extraction and storage analyzer.",feat:["ZIP / RAR support","Storage analyzer","Cloud sync","Hidden vault"]},
+ {n:"Learnify",t:"App",c:"Education",ic:"🎓",col:"#8b5cf6,#6366f1",v:"4.3.0",s:"36 MB",r:4.8,d:4200000,u:"Oct 25, 2026",os:"Android 7.0+",dev:"EduLab",link:"#",desc:"Learn languages and new skills with bite-sized lessons and daily streaks.",feat:["30+ languages","Daily goals","Offline lessons","Progress stats"]},
+ {n:"FitTrack",t:"App",c:"Health",ic:"💪",col:"#10b981,#84cc16",v:"7.5.3",s:"47 MB",r:4.5,d:2700000,u:"Oct 29, 2026",os:"Android 8.0+",dev:"FitWorks",link:"#",desc:"Track workouts, steps, calories and sleep with detailed weekly charts.",feat:["Step counter","Workout plans","Sleep tracking","Water reminder"]},
+ {n:"ChatLine Messenger",t:"App",c:"Social",ic:"💬",col:"#0ea5e9,#6366f1",v:"11.2.0",s:"72 MB",r:4.2,d:9600000,u:"Nov 02, 2026",os:"Android 6.0+",dev:"ChatLine Inc.",link:"#",desc:"Fast, private messaging with group chats, voice notes and video calls.",feat:["Group chats","Voice & video calls","Stickers","Dark mode"]},
+ {n:"Speed Racer 3D",t:"Game",c:"Racing",ic:"🏎️",col:"#ef4444,#7c3aed",v:"2.8.5",s:"612 MB",r:4.6,d:7300000,u:"Oct 31, 2026",os:"Android 8.0+",dev:"TurboStudio",link:"#",desc:"Realistic 3D racing with 100+ cars, online multiplayer and stunning tracks.",feat:["100+ cars","Online multiplayer","Car customization","Career mode"]},
+ {n:"Zombie Siege",t:"Game",c:"Action",ic:"🧟",col:"#65a30d,#166534",v:"1.9.3",s:"420 MB",r:4.4,d:5100000,u:"Oct 27, 2026",os:"Android 7.0+",dev:"DeadByte",link:"#",desc:"Defend your base from endless zombie waves. Upgrade weapons and survive the night.",feat:["50+ weapons","Base building","Daily missions","Boss fights"]},
+ {n:"Kingdom Tactics",t:"Game",c:"Strategy",ic:"🏰",col:"#f59e0b,#b45309",v:"5.1.0",s:"850 MB",r:4.7,d:6400000,u:"Nov 01, 2026",os:"Android 8.0+",dev:"CrownGames",link:"#",desc:"Build your kingdom, train armies and conquer rivals in epic real-time battles.",feat:["Real-time PvP","Alliances","Hero system","Seasonal events"]},
+ {n:"Puzzle Candy Pop",t:"Game",c:"Puzzle",ic:"🍬",col:"#ec4899,#f43f5e",v:"9.4.2",s:"96 MB",r:4.3,d:12000000,u:"Oct 26, 2026",os:"Android 5.0+",dev:"SweetLab",link:"#",desc:"Match colorful candies in thousands of fun puzzle levels. Easy to learn, hard to master.",feat:["3000+ levels","Power-ups","Daily rewards","Play offline"]},
+ {n:"Sky Pilot Wars",t:"Game",c:"Action",ic:"✈️",col:"#38bdf8,#1d4ed8",v:"3.2.1",s:"540 MB",r:4.5,d:3800000,u:"Oct 24, 2026",os:"Android 8.0+",dev:"AeroForge",link:"#",desc:"Take to the skies in intense dogfights with upgradable fighter jets.",feat:["40 aircraft","Co-op missions","HD graphics","Leaderboards"]},
+ {n:"Pocket Farm",t:"Game",c:"Simulation",ic:"🌾",col:"#84cc16,#15803d",v:"6.6.0",s:"128 MB",r:4.6,d:4500000,u:"Oct 20, 2026",os:"Android 6.0+",dev:"GreenThumb",link:"#",desc:"Grow crops, raise animals and trade with friends in this cozy farming sim.",feat:["Cozy gameplay","Trade with friends","Seasonal crops","Play offline"]},
+ {n:"Ludo Champions",t:"Game",c:"Board",ic:"🎲",col:"#f97316,#dc2626",v:"4.0.8",s:"58 MB",r:4.4,d:15000000,u:"Oct 19, 2026",os:"Android 5.0+",dev:"BoardKings",link:"#",desc:"The classic Ludo game with online rooms, private matches and voice chat.",feat:["Online rooms","Play with friends","Voice chat","Custom boards"]},
+ {n:"Pixel Quest RPG",t:"Game",c:"RPG",ic:"⚔️",col:"#8b5cf6,#0f172a",v:"1.4.7",s:"310 MB",r:4.8,d:2900000,u:"Nov 02, 2026",os:"Android 7.0+",dev:"Retro Pixel",link:"#",desc:"A retro-style pixel RPG with deep story, dungeons and hundreds of items to collect.",feat:["Story campaign","Endless dungeons","Crafting","Cloud save"]},
+];
+
+/* ---------------- logic ---------------- */
+const $=s=>document.querySelector(s);
+const PAGE=12;
+let state={type:'all',cat:'All',q:'',sort:'new',shown:PAGE};
+
+APPS.forEach((a,i)=>a.id=i);
+const fmt=n=>n>=1e6?(n/1e6).toFixed(1).replace('.0','')+'M':n>=1e3?(n/1e3).toFixed(0)+'K':n;
+const bg=c=>`background:linear-gradient(135deg,${c})`;
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+
+function categories(){
+  const set=new Set(APPS.filter(a=>state.type==='all'||a.t===state.type).map(a=>a.c));
+  return ['All',...[...set].sort()];
+}
+function renderChips(){
+  $('#chips').innerHTML=categories().map(c=>`<button class="chip ${c===state.cat?'active':''}" data-c="${esc(c)}">${esc(c)}</button>`).join('');
+  document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{state.cat=b.dataset.c;state.shown=PAGE;render()});
+}
+function filtered(){
+  let l=APPS.filter(a=>(state.type==='all'||a.t===state.type)&&(state.cat==='All'||a.c===state.cat)&&
+    (!state.q||(a.n+' '+a.c+' '+a.dev).toLowerCase().includes(state.q)));
+  const s=state.sort;
+  if(s==='rate')l.sort((a,b)=>b.r-a.r);
+  else if(s==='dl')l.sort((a,b)=>b.d-a.d);
+  else if(s==='name')l.sort((a,b)=>a.n.localeCompare(b.n));
+  else l.sort((a,b)=>new Date(b.u)-new Date(a.u));
+  return l;
+}
+function cardHTML(a){
+  return `<div class="card" onclick="openApp(${a.id})">
+    <div class="app-ic" style="${bg(a.col)}">${a.ic}</div>
+    <div class="info"><h3>${esc(a.n)}</h3>
+      <div class="meta">v${esc(a.v)} • ${esc(a.s)} • ⭐ ${a.r}</div>
+      <div class="meta">⬇ ${fmt(a.d)} • ${esc(a.u)}</div>
+      <span class="tag">${esc(a.c)}</span></div></div>`;
+}
+function render(){
+  renderChips();
+  const l=filtered();
+  $('#grid').innerHTML=l.slice(0,state.shown).map(cardHTML).join('');
+  $('#empty').style.display=l.length?'none':'block';
+  $('#more').style.display=l.length>state.shown?'block':'none';
+  const searching=state.q||state.cat!=='All'||state.type!=='all';
+  $('#featWrap').style.display=searching?'none':'block';
+  $('#listTitle').textContent=state.q?`Results for "${state.q}"`:state.cat!=='All'?state.cat:state.type==='all'?'Latest Updates':state.type+'s';
+}
+function renderFeatured(){
+  const top=[...APPS].sort((a,b)=>b.d-a.d).slice(0,6);
+  $('#featured').innerHTML=top.map(a=>`<div class="feat" style="${bg(a.col)}" onclick="openApp(${a.id})">
+    <div class="ic">${a.ic}</div><div><h3>${esc(a.n)}</h3><p>${esc(a.c)} • ⭐ ${a.r} • ⬇ ${fmt(a.d)}</p></div></div>`).join('');
+}
+function setType(t,el){
+  state.type=t;state.cat='All';state.shown=PAGE;
+  document.querySelectorAll('.menu a').forEach(x=>x.classList.remove('active'));
+  if(el)el.classList.add('active');
+  render();
+}
+function resetAll(){
+  state={type:'all',cat:'All',q:'',sort:'new',shown:PAGE};
+  $('#q').value='';$('#sort').value='new';
+  document.querySelectorAll('.menu a').forEach(x=>x.classList.toggle('active',x.dataset.type==='all'));
+  render();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* modal */
+let timer=null;
+function openApp(id){
+  const a=APPS[id];
+  const stars='★'.repeat(Math.round(a.r))+'☆'.repeat(5-Math.round(a.r));
+  $('#modal').innerHTML=`
+    <div class="m-top">
+      <div class="app-ic" style="${bg(a.col)}">${a.ic}</div>
+      <div><h2>${esc(a.n)}</h2><div class="meta" style="color:var(--muted)">${esc(a.dev)}</div>
+        <div style="color:#f59e0b">${stars} <small style="color:var(--muted)">${a.r}</small></div></div>
+      <button class="close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>${esc(a.s)}</b><small>Size</small></div>
+      <div class="fact"><b>${fmt(a.d)}</b><small>Downloads</small></div>
+      <div class="fact"><b>v${esc(a.v)}</b><small>Version</small></div>
+      <div class="fact"><b>${esc(a.t)}</b><small>Type</small></div>
+    </div>
+    <button class="dl-btn" id="dlBtn" onclick="startDownload(${a.id})">⬇ Download ${esc(a.t==='Game'?'Game':'APK')} (${esc(a.s)})</button>
+    <div class="progress" id="prog"><div id="bar"></div></div>
+    <h4>About</h4><p>${esc(a.desc)}</p>
+    <h4>Features</h4><ul>${a.feat.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
+    <h4>Information</h4>
+    <table class="spec">
+      <tr><td>Category</td><td>${esc(a.c)}</td></tr>
+      <tr><td>Developer</td><td>${esc(a.dev)}</td></tr>
+      <tr><td>Version</td><td>${esc(a.v)}</td></tr>
+      <tr><td>Requires</td><td>${esc(a.os)}</td></tr>
+      <tr><td>Updated</td><td>${esc(a.u)}</td></tr>
+    </table>`;
+  $('#overlay').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  clearInterval(timer);
+  $('#overlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+function startDownload(id){
+  const a=APPS[id],btn=$('#dlBtn'),prog=$('#prog'),bar=$('#bar');
+  let t=3;
+  btn.disabled=true;prog.style.display='block';bar.style.width='0';
+  btn.textContent=`Preparing download… ${t}s`;
+  setTimeout(()=>bar.style.width='100%',50);
+  bar.style.transitionDuration=t+'s';
+  timer=setInterval(()=>{
+    t--;
+    if(t>0){btn.textContent=`Preparing download… ${t}s`;return}
+    clearInterval(timer);
+    btn.disabled=false;btn.textContent='✅ Download started – click to retry';
+    prog.style.display='none';
+    if(a.link&&a.link!=='#'){
+      const l=document.createElement('a');
+      l.href=a.link;l.download='';l.rel='noopener';l.target='_blank';
+      document.body.appendChild(l);l.click();l.remove();
+    }else toast('Demo link — set a real "link" for this app in the APPS list.');
+  },1000);
+}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
+
+/* events */
+$('#overlay').addEventListener('click',e=>{if(e.target.id==='overlay')closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+let st;$('#q').addEventListener('input',e=>{clearTimeout(st);st=setTimeout(()=>{state.q=e.target.value.trim().toLowerCase();state.shown=PAGE;render()},200)});
+$('#sort').onchange=e=>{state.sort=e.target.value;render()};
+$('#more').onclick=()=>{state.shown+=PAGE;render()};
+$('#theme').onclick=()=>{
+  const d=document.body.classList.toggle('dark');
+  $('#theme').textContent=d?'☀️':'🌙';
+  try{localStorage.setItem('theme',d?'dark':'light')}catch(e){}
+};
+try{if(localStorage.getItem('theme')==='dark'){document.body.classList.add('dark');$('#theme').textContent='☀️'}}catch(e){}
+
+/* init */
+$('#yr').textContent=new Date().getFullYear();
+$('#sApps').textContent=APPS.filter(a=>a.t==='App').length;
+$('#sGames').textContent=APPS.filter(a=>a.t==='Game').length;
+renderFeatured();render();
+</script>
+</body>
+</html>
